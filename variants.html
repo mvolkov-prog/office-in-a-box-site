@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Варианты лендинга</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  :root { --ink: #1d1a33; --ink-2: #262142; --line: #4a4175; --paper: #f4ead9; --dim: #cfc5e0; --lamp: #ffc56b; }
+  body { margin: 0; background: var(--ink); color: var(--paper); font: 16px/1.5 "Onest", system-ui, sans-serif; }
+  main { max-width: 1200px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font: 600 44px/1.05 "Pixelify Sans", system-ui, sans-serif; margin: 0 0 8px; }
+  p.sub { color: var(--dim); margin: 0 0 36px; max-width: 60ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  a.v { display: block; text-decoration: none; color: inherit; background: var(--ink-2); padding: 14px; transition: transform .15s ease-out; }
+  a.v:hover { transform: translateY(-3px); }
+  a.v:focus-visible { outline: 3px solid var(--lamp); outline-offset: 3px; }
+  a.v img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; background: #000; }
+  a.v h2 { font: 600 24px "Pixelify Sans", system-ui, sans-serif; margin: 14px 0 4px; }
+  a.v p { margin: 0; color: var(--dim); font-size: 15px; }
+  .wait { display: grid; place-items: center; aspect-ratio: 16 / 10; background: #15132a; color: var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Четыре варианта лендинга</h1>
+  <p class="sub">Все живые: девочки ходят, реплики меняются, RU/EN и тон переключаются. Кликни, чтобы открыть.</p>
+  <div class="grid">
+    <a class="v" href="./"><img src="variants/a.webp" alt="" width="720" height="450"><h2>A. Сумерки</h2><p>Вечерний офис по твоим часам, редактор, где Юки правит тест, распорядок дня, отдел кадров.</p></a>
+    <a class="v" href="b/"><img src="variants/b.webp" alt="" width="720" height="450"><h2>B. Плакат</h2><p>Смелее: кобальт, заголовок 150px, девочки ростом с буквы, бегущая строка из их реплик.</p></a>
+    <a class="v" href="c/"><img src="variants/c.webp" alt="" width="720" height="450"><h2>C. Стикерпак</h2><p>Повеселее: солнечный день, девочки гуляют по всей странице, кофе по клику, конфетти при найме.</p></a>
+    <a class="v" href="d/"><img src="variants/d.webp" alt="" width="720" height="450"><h2>D. Эпизод 1</h2><p>Поанимешнее: опенинг, карточки героинь с нарисованным артом, переписка как в визуальной новелле.</p></a>
+  </div>
+</main>
+</body>
+</html>
