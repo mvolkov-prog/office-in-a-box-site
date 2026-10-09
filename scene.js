@@ -65,7 +65,7 @@ export class Office {
   addProp({ kind, x }) {
     const p = { kind, x, cvs: [] };
     const add = (grid, z, extra = {}) => { const cv = this.canvas(z); paintGrid(cv, grid); p.cvs.push({ cv, ...extra }); };
-    if (kind === "desk") { add(deskGlow(), 1, { glow: true }); add(deskFront(), 6); p.spots = [{ dx: -8, sit: 7, act: "work" }]; }
+    if (kind === "desk") { add(deskGlow(), 1, { glow: true }); p.cvs[0].cv.style.mixBlendMode = "screen"; add(deskFront(), 6); p.spots = [{ dx: -8, sit: 7, act: "work" }]; }
     if (kind === "coffee") { add(coffee(), 1); p.spots = [{ dx: 15, act: "coffee" }]; }
     if (kind === "cooler") { add(cooler(), 1); p.spots = [{ dx: -13, act: "water" }]; }
     if (kind === "sofa") { add(sofaBack(), 1); add(sofaFront(), 6); p.spots = [{ dx: -9, sit: 8, act: "sofa" }, { dx: 9, sit: 8, act: "sofa" }]; }
@@ -81,7 +81,7 @@ export class Office {
     const [, sky, lit] = skyAt(h);
     for (const p of this.props) for (const c of p.cvs) {
       if (c.win) paintGrid(c.cv, windowView(sky, lit, Math.round(p.x * 100)));
-      if (c.glow) c.cv.style.opacity = DARK(h) > 0 ? 0.55 : 0;
+      if (c.glow) c.cv.style.opacity = DARK(h) > 0 ? 0.35 : 0;
     }
     this.shade.style.opacity = DARK(h);
     for (const g of this.girls) if (!g.pinned) g.until = 0; // пересобрать день
@@ -167,7 +167,7 @@ export class Office {
       if (g.act === "walk") {
         const d = g.target - g.x;
         g.dir = d >= 0 ? 1 : -1;
-        g.x += g.dir * Math.min(Math.abs(d), ((14 * s) / Wd) * dt);
+        g.x += g.dir * Math.min(Math.abs(d), ((24 * s) / Wd) * dt);
         if (Math.abs(d) < 0.001) {
           g.act = g.next ?? "idle";
           g.until = t + (g.act === "work" ? (g.pinned ? 1e9 : 8 + Math.random() * 10) : g.act === "sofa" ? 6 + Math.random() * 8 : 3 + Math.random() * 4);

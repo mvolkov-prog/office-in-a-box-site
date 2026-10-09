@@ -38,8 +38,9 @@ export function deskFront(glow = "#8fd3ff") {
 /** Свет лампы и экрана — отдельный слой, чтобы гасить днём и зажигать вечером. */
 export function deskGlow(glow = "#8fd3ff") {
   const g = new Grid();
-  for (let y = 17; y <= 28; y++) for (let x = 2; x <= 16; x++) if ((x + y) % 2 === 0 && Math.hypot(x - 9, y - 17) < 9) g.set(x, y, "#ffd98a");
-  for (let y = 16; y <= 29; y++) for (let x = 24; x <= 30; x++) if ((x + y) % 2 === 0) g.set(x, y, glow);
+  // сплошной конус света; мягкость даёт screen-смешивание и прозрачность слоя в scene.js
+  for (let y = 17; y <= 28; y++) for (let x = 2; x <= 16; x++) if (Math.hypot(x - 9, y - 17) < 9 - (y - 17) * 0.15) g.set(x, y, y < 23 ? "#ffd98a" : "#e9b86a");
+  for (let y = 18; y <= 27; y++) for (let x = 26; x <= 30; x++) g.set(x, y, glow);
   return g;
 }
 
