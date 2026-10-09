@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Офис в коробке</title>
+<meta name="description" content="Пиксельный офис на рабочем столе: сотрудницы живут своей жизнью, помнят тебя, краснеют и делают задачи через Claude Code, Codex или любую модель.">
+<meta name="theme-color" content="#1b0f1d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 6' shape-rendering='crispEdges'%3E%3Cpath fill='%23e0577b' d='M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+<nav class="top">
+  <a class="brand" href="#top">
+    <canvas id="brandCv" width="48" height="48" aria-hidden="true"></canvas>
+    <span class="px" data-i18n="brand">Офис в коробке</span>
+  </a>
+  <div class="links">
+    <a href="#diary" data-i18n="nav.diary">Дневник</a>
+    <a href="#hire" data-i18n="nav.hire">Анкета</a>
+    <a href="#price" data-i18n="nav.price">Портрет</a>
+    <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+  </div>
+  <div class="toggles">
+    <div class="seg" role="group" aria-label="Язык / Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <div class="seg" role="group" aria-label="Тон / Tone">
+      <button type="button" data-tone="shy" aria-pressed="false" data-i18n="tone.shy">Смущённо</button>
+      <button type="button" data-tone="bold" aria-pressed="true" data-i18n="tone.bold">Смелее</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-copy">
+    <h1 class="px" data-i18n="hero.title">Мой первый день в роли босса</h1>
+    <div class="hero-side">
+      <p class="lead" data-i18n="hero.lead"></p>
+      <div class="cta">
+        <a class="btn primary" href="#hire" data-i18n="hero.hire">Нанять сотрудницу</a>
+        <button class="btn ghost" type="button" disabled><span data-i18n="hero.download">Скачать</span> <span class="tag" data-i18n="hero.soon">скоро</span></button>
+      </div>
+      <p class="meta" data-i18n="hero.meta"></p>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="lamp" style="--x:24%" aria-hidden="true"></div>
+    <div class="lamp" style="--x:71%" aria-hidden="true"></div>
+    <div class="office" id="heroOffice" role="img" data-i18n-label="stage.label"><div class="floor"></div></div>
+  </div>
+  <div class="roster" aria-labelledby="rosterLabel">
+    <p class="roster-label px" id="rosterLabel" data-i18n="roster.label">Симпатия</p>
+    <ul id="roster"></ul>
+  </div>
+  <p class="hint" data-i18n="stage.hint"></p>
+</header>
+
+<main id="main">
+  <section class="diary" id="diary">
+    <h2 class="px" data-i18n="diary.title">Записи из дневника босса</h2>
+    <div class="notebook">
+      <article class="entry">
+        <time class="px" data-i18n="d1.when"></time>
+        <div><h3 data-i18n="d1.t"></h3><p data-i18n="d1.p"></p></div>
+      </article>
+      <article class="entry">
+        <time class="px" data-i18n="d2.when"></time>
+        <div>
+          <h3 data-i18n="d2.t"></h3><p data-i18n="d2.p"></p>
+          <ol class="chat" id="chat">
+            <li class="me" data-i18n="c.me1"></li>
+            <li class="her"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="c.y1"></span></li>
+            <li class="tool" data-i18n="c.tool1"></li>
+            <li class="tool" data-i18n="c.tool2"></li>
+            <li class="her"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="c.y2"></span></li>
+            <li class="me" data-i18n="c.me2"></li>
+            <li class="her blush"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="c.y3"></span></li>
+          </ol>
+        </div>
+      </article>
+      <figure class="photo" aria-hidden="true">
+        <div class="cameo" data-girl="yuki"></div>
+        <figcaption data-i18n="photo.cap"></figcaption>
+      </figure>
+      <article class="entry">
+        <time class="px" data-i18n="d3.when"></time>
+        <div><h3 data-i18n="d3.t"></h3><p data-i18n="d3.p"></p></div>
+      </article>
+      <article class="entry">
+        <time class="px" data-i18n="d4.when"></time>
+        <div><h3 data-i18n="d4.t"></h3><p data-i18n="d4.p"></p></div>
+      </article>
+      <article class="entry">
+        <time class="px" data-i18n="d5.when"></time>
+        <div><h3 data-i18n="d5.t"></h3><p data-i18n="d5.p"></p><a class="inline" href="#top" data-i18n="d5.back"></a></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="hire" id="hire">
+    <div class="hire-head">
+      <h2 class="px" data-i18n="hire.title">Анкета новой сотрудницы</h2>
+      <p data-i18n="hire.p"></p>
+    </div>
+    <form class="form" id="hireForm" novalidate>
+      <div class="preview" aria-hidden="true">
+        <div class="say px" id="previewSay"></div>
+        <canvas id="hireCv" width="48" height="48"></canvas>
+        <canvas id="hireFx" width="48" height="60"></canvas>
+      </div>
+      <div class="fields">
+        <label class="row"><span data-i18n="f.name"></span><input id="hireName" value="Вишня" maxlength="16" spellcheck="false" autocomplete="off"></label>
+        <fieldset class="row"><legend data-i18n="f.kind"></legend>
+          <div class="chips" data-k="kind">
+            <button type="button" class="chip" data-v="fox" data-i18n="kind.fox"></button>
+            <button type="button" class="chip" data-v="cat" data-i18n="kind.cat"></button>
+            <button type="button" class="chip" data-v="bunny" data-i18n="kind.bunny"></button>
+            <button type="button" class="chip" data-v="wolf" data-i18n="kind.wolf"></button>
+          </div>
+        </fieldset>
+        <fieldset class="row"><legend data-i18n="f.outfit"></legend>
+          <div class="chips" data-k="outfit">
+            <button type="button" class="chip" data-v="office" data-i18n="outfit.office"></button>
+            <button type="button" class="chip" data-v="hoodie" data-i18n="outfit.hoodie"></button>
+            <button type="button" class="chip" data-v="dress" data-i18n="outfit.dress"></button>
+          </div>
+        </fieldset>
+        <fieldset class="row"><legend data-i18n="f.hair"></legend>
+          <div class="chips" data-k="style">
+            <button type="button" class="chip" data-v="bob" data-i18n="hair.bob"></button>
+            <button type="button" class="chip" data-v="long" data-i18n="hair.long"></button>
+            <button type="button" class="chip" data-v="twin" data-i18n="hair.twin"></button>
+            <button type="button" class="chip" data-v="pony" data-i18n="hair.pony"></button>
+          </div>
+        </fieldset>
+        <fieldset class="row"><legend data-i18n="f.color"></legend><div class="swatches" id="swatches"></div></fieldset>
+        <fieldset class="row call"><legend data-i18n="f.call"></legend>
+          <div class="chips" data-k="call">
+            <button type="button" class="chip" data-v="boss" data-i18n="call.boss"></button>
+            <button type="button" class="chip" data-v="chief" data-i18n="call.chief"></button>
+            <button type="button" class="chip" data-v="name" data-i18n="call.name"></button>
+          </div>
+          <label class="yourname" id="yourNameRow" hidden><span data-i18n="f.yourname"></span><input id="yourName" maxlength="16" spellcheck="false" autocomplete="given-name"></label>
+        </fieldset>
+        <div class="actions">
+          <button type="submit" class="btn primary" data-i18n="hire.do">Нанять</button>
+          <button type="button" class="btn ghost" id="randBtn" data-i18n="hire.rand">Случайная</button>
+          <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="price" id="price">
+    <div class="price-copy">
+      <h2 class="px" data-i18n="price.title">Подарить ей нарисованный портрет</h2>
+      <p data-i18n="price.p"></p>
+      <dl class="tiers">
+        <div><dt data-i18n="price.free"></dt><dd class="sum" data-i18n="price.free.v"></dd><dd data-i18n="price.free.l"></dd></div>
+        <div class="art"><dt data-i18n="price.art"></dt><dd class="sum" data-i18n="price.art.v"></dd><dd data-i18n="price.art.l"></dd></div>
+      </dl>
+    </div>
+    <div class="wall">
+      <p class="wall-label" id="giftLabel" data-i18n="price.gift"></p>
+      <div class="frames" role="group" aria-labelledby="giftLabel">
+        <button type="button" class="frame f-iskra" data-gift="iskra"><span class="cameo" data-girl="iskra"></span><span class="nm px">Искра</span><span class="say px" aria-live="polite"></span></button>
+        <button type="button" class="frame f-yuki" data-gift="yuki"><span class="cameo" data-girl="yuki"></span><span class="nm px">Юки</span><span class="say px" aria-live="polite"></span></button>
+        <button type="button" class="frame f-momo" data-gift="momo"><span class="cameo" data-girl="momo"></span><span class="nm px">Момо</span><span class="say px" aria-live="polite"></span></button>
+        <button type="button" class="frame f-nori" data-gift="nori"><span class="cameo" data-girl="nori"></span><span class="nm px">Нори</span><span class="say px" aria-live="polite"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <h2 class="px" data-i18n="faq.title">Вопросы</h2>
+    <details open><summary data-i18n="q1"></summary><p data-i18n="a1"></p></details>
+    <details><summary data-i18n="q2"></summary><p data-i18n="a2"></p></details>
+    <details><summary data-i18n="q3"></summary><p data-i18n="a3"></p></details>
+    <details><summary data-i18n="q4"></summary><p data-i18n="a4"></p></details>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="office foot-office" id="footOffice" aria-hidden="true"><div class="floor"></div></div>
+  <p data-i18n="foot"></p>
+</footer>
+
+<script type="module" src="landing.js"></script>
+</body>
+</html>
