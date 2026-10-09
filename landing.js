@@ -10,7 +10,9 @@ const store = {
 };
 let lang = store.get("oib.lang", navigator.language?.startsWith("ru") ? "ru" : "en");
 let tone = store.get("oib.tone", "cozy");
-const t = (k) => T[lang][k] ?? T.ru[k] ?? k;
+// Pixelify Sans склеивает «fi» в «A» даже с liga 0 — разбиваем пару невидимым ZWNJ
+const unfi = (s) => s.replace(/f(?=[iíl])/g, "f\u200C");
+const t = (k) => unfi(T[lang][k] ?? T.ru[k] ?? k);
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const lines = (kind) => pick(LINES[lang][tone][kind] ?? LINES[lang][tone].idle);
 
@@ -55,15 +57,27 @@ const hero = new Office(document.getElementById("heroOffice"), {
 cast.forEach((c, i) => setTimeout(() => hero.addGirl(c, { fromDoor: !reduced, x: reduced ? 0.15 + i * 0.2 : undefined }), reduced ? 0 : 350 + i * 650));
 
 // ---------- редактор: Юки правит тест ----------
-const CODE = [
-  [["c", "// Юки: дата приходит строкой — чиню парсер"]],
-  [["k", "import"], ["", " { parseUser } "], ["k", "from"], ["s", " \"./api\""], ["", ";"]],
-  [["", ""]],
-  [["f", "test"], ["", "("], ["s", "\"парсит дату регистрации\""], ["", ", () => {"]],
-  [["", "  "], ["k", "const"], ["", " u = parseUser({ joined: "], ["s", "\"2026-10-09\""], ["", " });"]],
-  [["", "  "], ["f", "expect"], ["", "(u.joined).toBeInstanceOf(Date);"]],
-  [["", "});"]],
-];
+const CODE_BY = {
+  ru: [
+    [["c", "// Юки: дата приходит строкой — чиню парсер"]],
+    [["k", "import"], ["", " { parseUser } "], ["k", "from"], ["s", " \"./api\""], ["", ";"]],
+    [["", ""]],
+    [["f", "test"], ["", "("], ["s", "\"парсит дату регистрации\""], ["", ", () => {"]],
+    [["", "  "], ["k", "const"], ["", " u = parseUser({ joined: "], ["s", "\"2026-10-09\""], ["", " });"]],
+    [["", "  "], ["f", "expect"], ["", "(u.joined).toBeInstanceOf(Date);"]],
+    [["", "});"]],
+  ],
+  en: [
+    [["c", "// Yuki: the date comes in as a string — fixing the parser"]],
+    [["k", "import"], ["", " { parseUser } "], ["k", "from"], ["s", " \"./api\""], ["", ";"]],
+    [["", ""]],
+    [["f", "test"], ["", "("], ["s", "\"parses the signup date\""], ["", ", () => {"]],
+    [["", "  "], ["k", "const"], ["", " u = parseUser({ joined: "], ["s", "\"2026-10-09\""], ["", " });"]],
+    [["", "  "], ["f", "expect"], ["", "(u.joined).toBeInstanceOf(Date);"]],
+    [["", "});"]],
+  ],
+};
+let CODE = CODE_BY.ru;
 const codeEl = document.getElementById("code");
 const toolEl = document.getElementById("tool");
 const TOOLS = { ru: ["читает src/api.test.ts", "запускает: pnpm test", "правит src/api.ts", "43 из 43 зелёные"], en: ["reading src/api.test.ts", "running: pnpm test", "editing src/api.ts", "43 of 43 green"] };
@@ -85,6 +99,7 @@ function renderCode(n) {
 }
 function restartCode() {
   clearInterval(codeTimer);
+  CODE = CODE_BY[lang];
   const total = CODE.reduce((s, l) => s + l.reduce((a, [, x]) => a + x.length, 0) + 1, 0);
   let n = reduced ? total : 0, step = 0;
   toolEl.textContent = TOOLS[lang][0];

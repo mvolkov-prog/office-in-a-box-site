@@ -171,7 +171,7 @@ legend { font: 700 18px var(--display); margin-bottom: 10px; padding: 0; }
 .tier .sample { width: 120px; height: 120px; align-self: flex-start; margin: -8px 0 4px -10px; }
 .tier .sample.hd { width: 120px; height: 120px; filter: saturate(1.1); }
 .tier .sample.drawn { width: 120px; height: 130px; object-fit: contain; image-rendering: auto; margin-left: -6px; }
-.amount { font: 700 34px var(--display); }
+.amount { font: 700 34px var(--body); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .tier .note { font: 500 14px var(--body); color: #5b4a6f; }
 .tier ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 15px; color: var(--paper-dim); }
 .tier.art ul { color: #4a3d5c; }
@@ -208,6 +208,9 @@ footer p { padding: 18px 16px 40px; color: var(--paper-dim); font-size: 14px; }
 }
 @media (max-width: 560px) {
   .top { gap: 10px; }
+  .editor { top: 10px; left: 10px; right: 10px; }
+  .code { height: 74px; font-size: 11px; padding: 10px 12px; }
+  .editor-status span { display: none; }
   .brand span { display: none; }
   .toggles { margin-left: auto; }
   .screen { height: 470px; }
@@ -219,3 +222,4 @@ footer p { padding: 18px 16px 40px; color: var(--paper-dim); font-size: 14px; }
   .code .cur { animation: none; }
   .bubble, .btn, .chip, .msgs li.shown { transition: none; }
 }
+
