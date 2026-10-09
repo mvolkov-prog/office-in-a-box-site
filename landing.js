@@ -1,95 +1,181 @@
-import { W, H, PRESETS, randomGirl, paint } from "./girls.js";
+import { PRESETS, randomGirl, paint } from "./girls.js";
+import { Office } from "./scene.js";
+import { T, LINES } from "./i18n.js";
 
-const KIND = { fox: "Лиса", cat: "Кошка", bunny: "Зайка", wolf: "Волчица" };
-const OUTFIT = { office: "офис", hoodie: "худи", dress: "платье", sport: "спорт" };
-const STYLE = { bob: "каре", long: "длинные", twin: "хвостики", pony: "хвост" };
-const LINES = {
-  idle: ["Ммм, кофе…", "Опять понедельник?", "Где мой степлер?", "Привет 👋"],
-  pushup: ["Раз… два…", "Ещё десять!", "За зелёный пайплайн!"],
-  spin: ["Та-дам!", "Как я тебе?", "Новое платье!"],
-  walk: ["Сейчас вернусь", "Иду за кофе", "Совещание? Уже бегу"],
-  poke: ["Ой! Что, босс?", "Не смотри так 😳", "Я работаю, честно!", "Похвалишь?"],
-};
-const pick = (a) => a[Math.floor(Math.random() * a.length)];
+document.documentElement.classList.add("js");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = {
+  get: (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* приватное окно */ } },
+};
+let lang = store.get("oib.lang", navigator.language?.startsWith("ru") ? "ru" : "en");
+let tone = store.get("oib.tone", "cozy");
+const t = (k) => T[lang][k] ?? T.ru[k] ?? k;
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const lines = (kind) => pick(LINES[lang][tone][kind] ?? LINES[lang][tone].idle);
 
-// ---------- живой офис в шапке ----------
-const office = document.getElementById("office");
-const SCALE = () => (office.clientWidth < 600 ? 3 : 4);
-const actors = PRESETS.map((c, i) => {
-  const cv = document.createElement("canvas");
-  cv.width = W; cv.height = H;
-  cv.setAttribute("aria-label", c.name);
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  office.append(cv, bubble);
-  const a = { c, cv, bubble, x: 0.15 + i * 0.23, act: "idle", target: null, until: 0, dir: 1, sayUntil: 0 };
-  cv.onclick = () => { a.act = "spin"; a.until = performance.now() / 1000 + 1.6; a.target = null; say(a, pick(LINES.poke)); };
-  return a;
+// ---------- язык и тон ----------
+function applyI18n() {
+  document.documentElement.lang = lang;
+  document.title = t("brand");
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
+  for (const el of document.querySelectorAll("[data-i18n-list]")) {
+    el.replaceChildren(...t(el.dataset.i18nList).split("|").map((s) => Object.assign(document.createElement("li"), { textContent: s })));
+  }
+  for (const b of document.querySelectorAll("[data-lang]")) b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+  for (const b of document.querySelectorAll("[data-tone]")) b.setAttribute("aria-pressed", String(b.dataset.tone === tone));
+  syncHire();
+  restartCode();
+}
+for (const b of document.querySelectorAll("[data-lang]")) b.onclick = () => { lang = b.dataset.lang; store.set("oib.lang", lang); applyI18n(); };
+for (const b of document.querySelectorAll("[data-tone]")) b.onclick = () => { tone = b.dataset.tone; store.set("oib.tone", tone); applyI18n(); };
+
+// ---------- девочки ----------
+const iskra = { ...PRESETS[0] };
+const yuki = { ...PRESETS[3] };
+const cast = [iskra, yuki, { ...PRESETS[1] }, { ...PRESETS[2] }];
+const still = (cv, c, act = "idle") => { const loop = (ms) => { paint(cv, c, reduced ? "idle" : act, ms / 1000); requestAnimationFrame(loop); }; requestAnimationFrame(loop); };
+still(document.getElementById("brandCv"), iskra);
+still(document.getElementById("yukiCv"), yuki);
+for (const cv of document.querySelectorAll(".ava")) still(cv, yuki);
+still(document.getElementById("tierPx"), iskra);
+still(document.getElementById("tierHd"), { ...PRESETS[1] }, "spin");
+
+// ---------- офис на первом экране: по твоим часам ----------
+const narrow = innerWidth < 760;
+const heroLayout = narrow
+  ? [{ kind: "coffee", x: 0.16 }, { kind: "window", x: 0.5 }, { kind: "desk", x: 0.5 }, { kind: "sofa", x: 0.84 }]
+  : [{ kind: "cooler", x: 0.07 }, { kind: "coffee", x: 0.2 }, { kind: "window", x: 0.3 }, { kind: "desk", x: 0.38 }, { kind: "desk", x: 0.58 }, { kind: "sofa", x: 0.85 }];
+const scale = () => 3;
+const now = new Date();
+const hero = new Office(document.getElementById("heroOffice"), {
+  layout: heroLayout, girls: [], lines, scale, reduced, hour: now.getHours() + now.getMinutes() / 60, pin: { index: 1 },
+});
+// один момент на загрузке: сотрудницы заходят по одной
+cast.forEach((c, i) => setTimeout(() => hero.addGirl(c, { fromDoor: !reduced, x: reduced ? 0.15 + i * 0.2 : undefined }), reduced ? 0 : 350 + i * 650));
+
+// ---------- редактор: Юки правит тест ----------
+const CODE = [
+  [["c", "// Юки: дата приходит строкой — чиню парсер"]],
+  [["k", "import"], ["", " { parseUser } "], ["k", "from"], ["s", " \"./api\""], ["", ";"]],
+  [["", ""]],
+  [["f", "test"], ["", "("], ["s", "\"парсит дату регистрации\""], ["", ", () => {"]],
+  [["", "  "], ["k", "const"], ["", " u = parseUser({ joined: "], ["s", "\"2026-10-09\""], ["", " });"]],
+  [["", "  "], ["f", "expect"], ["", "(u.joined).toBeInstanceOf(Date);"]],
+  [["", "});"]],
+];
+const codeEl = document.getElementById("code");
+const toolEl = document.getElementById("tool");
+const TOOLS = { ru: ["читает src/api.test.ts", "запускает: pnpm test", "правит src/api.ts", "43 из 43 зелёные"], en: ["reading src/api.test.ts", "running: pnpm test", "editing src/api.ts", "43 of 43 green"] };
+let codeTimer = 0;
+function renderCode(n) {
+  let left = n, html = "";
+  for (const line of CODE) {
+    for (const [cls, text] of line) {
+      if (left <= 0) break;
+      const part = text.slice(0, left);
+      left -= part.length;
+      const safe = part.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      html += cls ? `<span class="${cls}">${safe}</span>` : safe;
+    }
+    if (left <= 0) break;
+    html += "\n"; left -= 1;
+  }
+  codeEl.innerHTML = html + '<span class="cur"></span>';
+}
+function restartCode() {
+  clearInterval(codeTimer);
+  const total = CODE.reduce((s, l) => s + l.reduce((a, [, x]) => a + x.length, 0) + 1, 0);
+  let n = reduced ? total : 0, step = 0;
+  toolEl.textContent = TOOLS[lang][0];
+  renderCode(n);
+  if (reduced) return;
+  codeTimer = setInterval(() => {
+    n += 1 + (Math.random() < 0.3 ? 1 : 0);
+    if (n % 60 === 0) toolEl.textContent = TOOLS[lang][(++step) % TOOLS[lang].length];
+    if (n > total + 90) { n = 0; step = 0; toolEl.textContent = TOOLS[lang][0]; }
+    renderCode(Math.min(n, total));
+  }, 55);
+}
+
+// ---------- переписка появляется, когда до неё доскроллили ----------
+const msgs = [...document.querySelectorAll("#msgs li")];
+if (!reduced) {
+  msgs.forEach((li) => li.classList.add("wait"));
+  new IntersectionObserver(([e], obs) => {
+    if (!e.isIntersecting) return;
+    obs.disconnect();
+    msgs.forEach((li, i) => setTimeout(() => { li.classList.add("shown"); li.classList.remove("wait"); }, 250 + i * 520));
+  }, { threshold: 0.15 }).observe(document.getElementById("msgs"));
+}
+
+// ---------- распорядок дня ----------
+const day = new Office(document.getElementById("dayOffice"), {
+  layout: narrow
+    ? [{ kind: "coffee", x: 0.15 }, { kind: "window", x: 0.5 }, { kind: "desk", x: 0.5 }, { kind: "sofa", x: 0.85 }]
+    : [{ kind: "cooler", x: 0.07 }, { kind: "coffee", x: 0.2 }, { kind: "window", x: 0.36 }, { kind: "desk", x: 0.38 }, { kind: "desk", x: 0.55 }, { kind: "window", x: 0.7 }, { kind: "plant", x: 0.72 }, { kind: "sofa", x: 0.88 }],
+  girls: cast.map((c) => ({ ...c })), lines, scale: () => 3, reduced, hour: 15,
+});
+const hourEl = document.getElementById("hour"), clockEl = document.getElementById("clock");
+hourEl.oninput = () => {
+  const v = +hourEl.value, h = Math.floor(v) % 24, m = Math.round((v % 1) * 60);
+  clockEl.textContent = `${h}:${String(m).padStart(2, "0")}`;
+  day.setHour(v % 24);
+};
+
+// ---------- отдел кадров ----------
+const HAIR = ["#e0642a", "#a98ad8", "#f0cc6a", "#8fa2c4", "#3a2a2a", "#e9e4dc", "#5fbf9a", "#d94f6a"];
+const NAMES = { ru: ["Искорка", "Мята", "Пуговка", "Ласка", "Вишня", "Тучка", "Ириска", "Кнопка"], en: ["Sparky", "Minty", "Button", "Cherry", "Cloudy", "Toffee", "Pixel", "Maple"] };
+let girl = { ...PRESETS[0] };
+let badge = 7;
+const hireCv = document.getElementById("hireCv");
+let hireAct = "idle", hireUntil = 0;
+const hireLoop = (ms) => {
+  const s = ms / 1000;
+  if (s > hireUntil) hireAct = "idle";
+  paint(hireCv, girl, reduced ? "idle" : hireAct, s);
+  requestAnimationFrame(hireLoop);
+};
+requestAnimationFrame(hireLoop);
+const twirl = () => { hireAct = "spin"; hireUntil = performance.now() / 1000 + 1.2; };
+
+const sw = document.getElementById("swatches");
+for (const c of HAIR) {
+  const b = Object.assign(document.createElement("button"), { type: "button", className: "swatch" });
+  b.style.background = c;
+  b.dataset.color = c;
+  b.setAttribute("aria-label", c);
+  b.onclick = () => { girl = { ...girl, hair: c }; syncHire(); twirl(); };
+  sw.appendChild(b);
+}
+for (const group of document.querySelectorAll(".chips[data-k]")) {
+  for (const b of group.querySelectorAll(".chip")) b.onclick = () => { girl = { ...girl, [group.dataset.k]: b.dataset.v }; syncHire(); twirl(); };
+}
+function syncHire() {
+  for (const group of document.querySelectorAll(".chips[data-k]"))
+    for (const b of group.querySelectorAll(".chip")) b.setAttribute("aria-pressed", String(girl[group.dataset.k] === b.dataset.v));
+  for (const b of sw.children) b.setAttribute("aria-pressed", String(b.dataset.color === girl.hair));
+  document.getElementById("hireRole").textContent = t(`role.${girl.kind}`);
+}
+document.getElementById("randBtn").onclick = () => {
+  girl = randomGirl();
+  document.getElementById("hireName").value = pick(NAMES[lang]);
+  syncHire(); twirl();
+};
+const toast = document.getElementById("toast");
+document.getElementById("hireBtn").onclick = () => {
+  if (hero.girls.length >= 8) hero.removeOldest();
+  hero.addGirl({ ...girl, name: document.getElementById("hireName").value }, { fromDoor: true });
+  badge += 1;
+  document.getElementById("badgeNo").textContent = `№ ${String(badge).padStart(3, "0")}`;
+  toast.textContent = t("hire.hired");
+  setTimeout(() => (toast.textContent = ""), 3500);
+};
+
+// ---------- подвал ----------
+new Office(document.getElementById("footOffice"), {
+  layout: [{ kind: "plant", x: 0.08 }, { kind: "cooler", x: 0.92 }],
+  girls: cast.map((c) => ({ ...c })), lines, scale: () => 2, floorH: 30, reduced, hour: 21,
 });
 
-function say(a, text) {
-  a.bubble.textContent = text;
-  a.bubble.classList.add("on");
-  a.sayUntil = performance.now() / 1000 + 2.4;
-}
-
-function decide(a, t) {
-  const r = Math.random();
-  if (r < 0.45) { a.act = "walk"; a.target = 0.08 + Math.random() * 0.84; a.until = t + 12; }
-  else if (r < 0.65) { a.act = "pushup"; a.until = t + 3 + Math.random() * 3; }
-  else if (r < 0.75) { a.act = "spin"; a.until = t + 1.6; }
-  else { a.act = "idle"; a.until = t + 2 + Math.random() * 4; }
-  if (Math.random() < 0.3 && actors.every((o) => o.sayUntil < t)) say(a, pick(LINES[a.act]));
-}
-
-let last = 0;
-function tick(ms) {
-  const t = ms / 1000, dt = Math.min(0.05, t - last); last = t;
-  const s = SCALE(), Wd = office.clientWidth, floorTop = office.clientHeight - 54;
-  for (const a of actors) {
-    if (!reduced && t > a.until) decide(a, t);
-    if (a.act === "walk" && a.target != null) {
-      const d = a.target - a.x;
-      a.dir = d >= 0 ? 1 : -1;
-      a.x += a.dir * Math.min(Math.abs(d), (60 / Wd) * dt);
-      if (Math.abs(d) < 0.002) { a.act = "idle"; a.until = t + 1 + Math.random() * 2; a.target = null; }
-    }
-    paint(a.cv, a.c, reduced ? "idle" : a.act, t + a.x * 7, a.act === "walk" && a.dir < 0);
-    a.cv.style.width = W * s + "px"; a.cv.style.height = H * s + "px";
-    const left = a.x * Wd - (W * s) / 2;
-    a.cv.style.left = left + "px";
-    a.cv.style.top = floorTop - 45 * s + 10 + "px";
-    a.bubble.style.left = a.x * Wd + "px";
-    a.bubble.style.top = floorTop - 40 * s + "px";
-    if (t > a.sayUntil) a.bubble.classList.remove("on");
-  }
-  genTick(t);
-  requestAnimationFrame(tick);
-}
-
-// ---------- генератор ----------
-const genCv = document.getElementById("genCv");
-genCv.style.width = W * 5 + "px"; genCv.style.height = H * 5 + "px";
-let girl = { ...PRESETS[0] };
-let genAct = "idle";
-function syncChips() {
-  for (const b of document.querySelectorAll(".chip")) {
-    const v = b.dataset.k === "act" ? genAct : girl[b.dataset.k];
-    b.setAttribute("aria-pressed", String(v === b.dataset.v));
-  }
-  document.getElementById("genName").textContent = KIND[girl.kind] ?? "Новенькая";
-  document.getElementById("genMeta").textContent = `${OUTFIT[girl.outfit]} · ${STYLE[girl.style]}`;
-}
-for (const b of document.querySelectorAll(".chip")) {
-  b.onclick = () => {
-    if (b.dataset.k === "act") genAct = b.dataset.v;
-    else girl = { ...girl, [b.dataset.k]: b.dataset.v };
-    syncChips();
-  };
-}
-document.getElementById("genRand").onclick = () => { girl = randomGirl(); syncChips(); };
-syncChips();
-function genTick(t) { paint(genCv, girl, reduced ? "idle" : genAct, t); }
-
-requestAnimationFrame(tick);
+applyI18n();

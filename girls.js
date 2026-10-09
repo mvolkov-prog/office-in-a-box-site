@@ -3,7 +3,7 @@
 export const W = 48, H = 48, FLOOR = 45;
 
 // ---------- сетка ----------
-class Grid {
+export class Grid {
   constructor() { this.c = new Array(W * H).fill(null); }
   set(x, y, col) { x |= 0; y |= 0; if (x >= 0 && y >= 0 && x < W && y < H && col) this.c[y * W + x] = col; }
   get(x, y) { return x >= 0 && y >= 0 && x < W && y < H ? this.c[y * W + x] : null; }
@@ -36,13 +36,13 @@ class Grid {
 }
 
 // ---------- цвет ----------
-const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+export const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const toHex = (rgb) => "#" + rgb.map((v) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, "0")).join("");
-const shade = (h, k) => toHex(hex(h).map((v) => v * k));
-const mix = (a, b, t) => toHex(hex(a).map((v, i) => v + (hex(b)[i] - v) * t));
+export const shade = (h, k) => toHex(hex(h).map((v) => v * k));
+export const mix = (a, b, t) => toHex(hex(a).map((v, i) => v + (hex(b)[i] - v) * t));
 
 /** Тень снизу-справа (свет сверху-слева) и контур темнее соседнего цвета. */
-function finish(g) {
+export function finish(g) {
   const out = new Grid();
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const c = g.get(x, y);
