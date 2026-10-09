@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Офис в коробке</title>
+<meta name="description" content="Пиксельный офис на рабочем столе: сотрудницы живут своей жизнью и делают задачи через Claude Code, Codex или любую модель.">
+<meta name="theme-color" content="#2457ff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Cpath fill='%23e0642a' d='M1 0h1v1h1v1h2V1h1V0h1v4H1z'/%3E%3Cpath fill='%23f6d3bd' d='M2 3h4v3H2z'/%3E%3Cpath fill='%2326304a' d='M3 4h1v1H3zM5 4h1v1H5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#how">К содержанию</a>
+<nav class="top" aria-label="Основное">
+  <a class="brand" href="#top"><canvas id="brandCv" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="brand">Офис в коробке</span></a>
+  <div class="links">
+    <a href="#how" data-i18n="nav.how">Как это</a>
+    <a href="#hire" data-i18n="nav.hire">Нанять</a>
+    <a href="#price" data-i18n="nav.price">Цены</a>
+    <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+  </div>
+  <div class="toggles">
+    <div class="seg" role="group" aria-label="Язык / Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <div class="seg" role="group" aria-label="Тон / Tone">
+      <button type="button" data-tone="cozy" aria-pressed="true" data-i18n="tone.cozy">Уютно</button>
+      <button type="button" data-tone="bold" aria-pressed="false" data-i18n="tone.bold">Смелее</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <h1><span id="t1">Они живут</span><br><span id="t2">у тебя</span><br><span class="t3" id="t3">на экране.</span></h1>
+  <div class="hero-side">
+    <p class="lead" id="lead" data-i18n="hero.lead"></p>
+    <div class="cta">
+      <a class="btn sun" href="#hire" data-i18n="hero.hire">Нанять первую</a>
+      <span class="btn ghost" aria-disabled="true"><span data-i18n="hero.download">Скачать</span><small data-i18n="hero.soon">скоро</small></span>
+    </div>
+    <p class="meta" data-i18n="hero.meta"></p>
+  </div>
+  <div class="office stage" id="heroOffice" aria-label="Живой офис"><div class="floor"></div></div>
+  <p class="hint" data-i18n="hero.poke"></p>
+</header>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<main>
+  <section class="how" id="how">
+    <h2 data-i18n="how.title">Не чат. Коллеги.</h2>
+    <div class="points">
+      <div><h3 data-i18n="how.life.t"></h3><p data-i18n="how.life.p"></p></div>
+      <div><h3 data-i18n="how.memory.t"></h3><p data-i18n="how.memory.p"></p></div>
+      <div><h3 data-i18n="how.work.t"></h3><p data-i18n="how.work.p"></p></div>
+    </div>
+    <div class="transcript">
+      <div class="transcript-head"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><h3 data-i18n="chat.title"></h3><span class="via" data-i18n="editor.status"></span></div>
+      <ol class="msgs">
+        <li class="me"><b data-i18n="chat.who.me"></b><span data-i18n="chat.me1"></span></li>
+        <li class="her"><b data-i18n="chat.who.her"></b><span data-i18n="chat.y1"></span></li>
+        <li class="tool" data-i18n="chat.tool1"></li>
+        <li class="tool" data-i18n="chat.tool2"></li>
+        <li class="her"><b data-i18n="chat.who.her"></b><span data-i18n="chat.y2"></span></li>
+        <li class="me"><b data-i18n="chat.who.me"></b><span data-i18n="chat.me2"></span></li>
+        <li class="her"><b data-i18n="chat.who.her"></b><span data-i18n="chat.y3"></span></li>
+      </ol>
+    </div>
+    <p class="engines"><span data-i18n="engines"></span> Claude Code, Codex, OpenAI, OpenRouter, Grok, Yandex AI Studio, Ollama.</p>
+  </section>
+
+  <section class="hire" id="hire">
+    <div class="hire-head">
+      <h2 data-i18n="hire.title"></h2>
+      <p data-i18n="hire.p"></p>
+    </div>
+    <div class="booth">
+      <canvas id="hireCv" width="48" height="48" aria-hidden="true"></canvas>
+      <label class="name-row"><span data-i18n="hire.name">Имя</span><input id="hireName" class="name" value="Искорка" maxlength="16" spellcheck="false"></label>
+      <p class="role"><span data-i18n="hire.role">Должность</span>: <b id="hireRole"></b></p>
+    </div>
+    <form class="form" id="hireForm">
+      <fieldset><legend data-i18n="hire.kind"></legend>
+        <div class="chips" data-k="kind">
+          <button type="button" class="chip" data-v="fox" data-i18n="kind.fox"></button>
+          <button type="button" class="chip" data-v="cat" data-i18n="kind.cat"></button>
+          <button type="button" class="chip" data-v="bunny" data-i18n="kind.bunny"></button>
+          <button type="button" class="chip" data-v="wolf" data-i18n="kind.wolf"></button>
+        </div>
+      </fieldset>
+      <fieldset><legend data-i18n="hire.outfit"></legend>
+        <div class="chips" data-k="outfit">
+          <button type="button" class="chip" data-v="office" data-i18n="outfit.office"></button>
+          <button type="button" class="chip" data-v="hoodie" data-i18n="outfit.hoodie"></button>
+          <button type="button" class="chip" data-v="dress" data-i18n="outfit.dress"></button>
+          <button type="button" class="chip" data-v="sport" data-i18n="outfit.sport"></button>
+        </div>
+      </fieldset>
+      <fieldset><legend data-i18n="hire.hair"></legend>
+        <div class="chips" data-k="style">
+          <button type="button" class="chip" data-v="bob" data-i18n="hair.bob"></button>
+          <button type="button" class="chip" data-v="long" data-i18n="hair.long"></button>
+          <button type="button" class="chip" data-v="twin" data-i18n="hair.twin"></button>
+          <button type="button" class="chip" data-v="pony" data-i18n="hair.pony"></button>
+        </div>
+      </fieldset>
+      <fieldset><legend data-i18n="hire.color"></legend>
+        <div class="swatches" id="swatches"></div>
+      </fieldset>
+      <div class="hire-actions">
+        <button type="submit" class="btn ink" id="hireBtn" data-i18n="hire.do"></button>
+        <button type="button" class="btn line" id="randBtn" data-i18n="hire.rand"></button>
+        <p class="toast" id="toast" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
+
+  <section class="price" id="price">
+    <h2><span data-i18n="price.title"></span><br><span class="num" data-i18n="price.title2"></span></h2>
+    <p class="sub" data-i18n="price.p"></p>
+    <div class="tiers">
+      <article class="tier">
+        <h3 data-i18n="tier.px"></h3>
+        <p class="amount num" data-i18n="tier.px.price"></p>
+        <canvas class="sample" id="tierPx" width="48" height="48" aria-hidden="true"></canvas>
+        <ul data-i18n-list="tier.px.l"></ul>
+      </article>
+      <article class="tier">
+        <h3 data-i18n="tier.hd"></h3>
+        <p class="amount num"><span data-i18n="tier.hd.price"></span> <small data-i18n="tier.hd.note"></small></p>
+        <canvas class="sample hd" id="tierHd" width="48" height="48" aria-hidden="true"></canvas>
+        <ul data-i18n-list="tier.hd.l"></ul>
+      </article>
+      <article class="tier art">
+        <h3 data-i18n="tier.art"></h3>
+        <p class="amount num"><small data-i18n="tier.art.from"></small> <span data-i18n="tier.art.price"></span> <small data-i18n="tier.art.note"></small></p>
+        <img class="sample drawn" src="../assets/iskra-drawn.png" alt="Искра, нарисованная в аниме-стиле" width="192" height="208">
+        <ul data-i18n-list="tier.art.l"></ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <h2 data-i18n="faq.title"></h2>
+    <div class="qa">
+      <details><summary data-i18n="faq.q1"></summary><p data-i18n="faq.a1"></p></details>
+      <details><summary data-i18n="faq.q2"></summary><p data-i18n="faq.a2"></p></details>
+      <details><summary data-i18n="faq.q3"></summary><p data-i18n="faq.a3"></p></details>
+      <details><summary data-i18n="faq.q4"></summary><p data-i18n="faq.a4"></p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="office foot-office" id="footOffice"><div class="floor"></div></div>
+  <p><span data-i18n="footer"></span> <a href="../" data-i18n="footer.a">Вариант A</a></p>
+</footer>
+
+<script type="module" src="landing.js"></script>
+</body>
+</html>
