@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru" data-mode="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Офис в коробке</title>
+<meta name="description" content="Пиксельный офис на рабочем столе: днём уютный, ночью смелее. Сотрудницы живут своей жизнью и делают задачи через Claude Code, Codex или любую модель.">
+<meta name="theme-color" content="#cfeeff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Cpath fill='%23e0642a' d='M1 0h1v1h1v1h2V1h1V0h1v4H1z'/%3E%3Cpath fill='%23f6d3bd' d='M2 3h4v3H2z'/%3E%3Cpath fill='%2326304a' d='M3 4h1v1H3zM5 4h1v1H5z'/%3E%3C/svg%3E">
+<script>
+  // режим ставим до первой отрисовки: ?mode= → выбор посетителя → его часы (ночь с 19:00 до 7:00)
+  (function () {
+    var q = new URLSearchParams(location.search).get("mode"), m = q === "night" || q === "day" ? q : null;
+    if (!m) { try { m = localStorage.getItem("oib.f.mode"); } catch (e) { m = null; } }
+    if (m !== "night" && m !== "day") { var h = new Date().getHours(); m = h >= 19 || h < 7 ? "night" : "day"; }
+    document.documentElement.dataset.mode = m;
+  })();
+</script>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">К содержанию</a>
+<nav class="top" aria-label="Меню">
+  <a class="brand" href="#top">
+    <canvas id="brandCv" width="48" height="48" aria-hidden="true"></canvas>
+    <span class="px" data-i18n="brand">Офис в коробке</span>
+  </a>
+  <div class="links">
+    <a href="#how" data-i18n="nav.how">Как это</a>
+    <a href="#day" data-i18n="nav.day">Распорядок</a>
+    <a href="#hire" data-i18n="nav.hire">Нанять</a>
+    <a href="#price" data-i18n="nav.price">Цены</a>
+    <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+  </div>
+  <div class="toggles">
+    <div class="seg" role="group" aria-label="Язык / Language">
+      <button type="button" data-lang="ru" aria-pressed="true">RU</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <div class="seg mode" role="group" data-i18n-label="mode.group" aria-label="Настроение страницы">
+      <button type="button" data-set-mode="day" aria-pressed="true">
+        <svg viewBox="0 0 9 9" aria-hidden="true" shape-rendering="crispEdges"><path d="M4 0h1v1H4zM4 8h1v1H4zM0 4h1v1H0zM8 4h1v1H8zM1 1h1v1H1zM7 1h1v1H7zM1 7h1v1H1zM7 7h1v1H7zM3 2h3v1h1v3H6v1H3V6H2V3h1z"/></svg>
+        <span data-i18n="mode.day">Уютно</span>
+      </button>
+      <button type="button" data-set-mode="night" aria-pressed="false">
+        <svg viewBox="0 0 9 9" aria-hidden="true" shape-rendering="crispEdges"><path d="M3 0h3v1H4v1H3v5h1v1h3v1H3V8H2V7H1V2h1V1h1z"/><path d="M7 5h1v1H7z"/></svg>
+        <span data-i18n="mode.night">Смелее</span>
+      </button>
+    </div>
+  </div>
+</nav>
+<p class="sr" id="modeSaid" role="status" aria-live="polite"></p>
+
+<div class="sky" aria-hidden="true">
+  <div class="sun" id="sunSlot"></div>
+  <div class="clouds" id="clouds"></div>
+  <div class="moon" id="moonSlot"></div>
+  <div class="stars" id="stars"></div>
+</div>
+
+<header class="hero" id="top">
+  <div class="hero-copy">
+    <h1 class="px" data-i18n="hero.title">Офис, который живёт у тебя на экране</h1>
+    <p class="lead" data-i18n="hero.lead"></p>
+    <div class="cta">
+      <a class="btn primary px-c" href="#hire" data-i18n="hero.hire">Нанять первую сотрудницу</a>
+      <button class="btn ghost px-c" type="button" disabled><span data-i18n="hero.download">Скачать</span> <span class="tag" data-i18n="hero.soon">скоро</span></button>
+    </div>
+    <p class="meta" data-i18n="hero.meta"></p>
+  </div>
+
+  <div class="stage-col">
+    <div class="screen px-c" id="stage" data-perch>
+      <div class="lamp" aria-hidden="true"></div>
+      <div class="editor px-c" aria-hidden="true">
+        <div class="editor-bar"><i></i><i></i><i></i><span data-i18n="editor.title">api.test.ts — мой-проект</span></div>
+        <pre class="code" id="code"></pre>
+        <div class="editor-status"><canvas id="yukiCv" width="48" height="48"></canvas><span data-i18n="editor.status">Юки работает через Claude Code</span><b id="tool"></b></div>
+      </div>
+      <div class="office hero-office" id="heroOffice" role="img" data-i18n-label="stage.label"><div class="floor"></div></div>
+    </div>
+    <div class="roster" id="rosterBox">
+      <p class="roster-label px" id="rosterLabel" data-i18n="roster.label">Симпатия</p>
+      <ul id="roster" aria-labelledby="rosterLabel"></ul>
+    </div>
+    <p class="hint"><span id="hintCup"></span><span data-i18n="hero.hint"></span></p>
+  </div>
+</header>
+
+<main id="main">
+  <section class="how" id="how">
+    <div class="how-copy">
+      <h2 class="px" data-perch data-i18n="how.title">Не ещё один чат. Коллеги.</h2>
+      <dl class="points">
+        <div><dt class="px" data-i18n="how.life.t"></dt><dd data-i18n="how.life.p"></dd></div>
+        <div><dt class="px" data-i18n="how.memory.t"></dt><dd data-i18n="how.memory.p"></dd></div>
+        <div><dt class="px" data-i18n="how.work.t"></dt><dd data-i18n="how.work.p"></dd></div>
+      </dl>
+    </div>
+    <div class="chat px-c" data-perch="wide">
+      <ol class="msgs" id="msgs">
+        <li class="me" data-i18n="chat.me1"></li>
+        <li class="her"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="chat.y1"></span></li>
+        <li class="tool" data-i18n="chat.tool1"></li>
+        <li class="tool" data-i18n="chat.tool2"></li>
+        <li class="her"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="chat.y2"></span></li>
+        <li class="me" data-i18n="chat.me2"></li>
+        <li class="her last"><canvas class="ava" width="48" height="48" aria-hidden="true"></canvas><span data-i18n="chat.y3"></span></li>
+      </ol>
+    </div>
+    <div class="engines">
+      <p data-i18n="engines"></p>
+      <ul><li>Claude Code</li><li>Codex</li><li>OpenAI</li><li>OpenRouter</li><li>Grok</li><li>Yandex AI Studio</li><li>Ollama</li></ul>
+    </div>
+  </section>
+
+  <section class="day" id="day">
+    <div class="day-head">
+      <div>
+        <h2 class="px" data-perch data-i18n="day.title">Распорядок дня</h2>
+        <p data-i18n="day.p"></p>
+      </div>
+      <p class="clock-box"><output class="clock" id="clock" for="hour">15:00</output><span class="clock-word px" id="clockWord"></span></p>
+    </div>
+    <div class="office day-office px-c" id="dayOffice"><div class="floor"></div></div>
+    <label class="slider">
+      <span class="sr" data-i18n="day.label">Время</span>
+      <input type="range" id="hour" min="6" max="24" step="0.25" value="15">
+      <span class="ticks" aria-hidden="true"><span>6:00</span><span>9:00</span><span>12:00</span><span>15:00</span><span class="eve">19:00</span><span>21:00</span><span>0:00</span></span>
+    </label>
+  </section>
+
+  <section class="hire" id="hire">
+    <div class="hire-head">
+      <h2 class="px" data-perch data-i18n="hire.title">Отдел кадров</h2>
+      <p data-i18n="hire.p"></p>
+    </div>
+    <form class="hire-grid" id="hireForm" novalidate>
+      <figure class="badge px-c" data-perch>
+        <div class="badge-top px"><span data-i18n="hire.badge">Пропуск</span><span id="badgeNo">№ 007</span></div>
+        <div class="photo" id="photo">
+          <p class="say px" id="previewSay" aria-hidden="true"></p>
+          <canvas id="hireCv" width="48" height="48" aria-hidden="true"></canvas>
+          <canvas id="hireFx" width="48" height="60" aria-hidden="true"></canvas>
+        </div>
+        <figcaption>
+          <label class="sr" for="hireName" data-i18n="hire.name">Имя</label>
+          <input id="hireName" class="name px" value="Искорка" maxlength="16" spellcheck="false" autocomplete="off">
+          <span class="role"><span data-i18n="hire.role">Должность</span>: <b id="hireRole"></b></span>
+        </figcaption>
+      </figure>
+      <div class="form">
+        <fieldset><legend class="px" data-i18n="hire.kind"></legend>
+          <div class="chips" data-k="kind">
+            <button type="button" class="chip px-c" data-v="fox" data-i18n="kind.fox"></button>
+            <button type="button" class="chip px-c" data-v="cat" data-i18n="kind.cat"></button>
+            <button type="button" class="chip px-c" data-v="bunny" data-i18n="kind.bunny"></button>
+            <button type="button" class="chip px-c" data-v="wolf" data-i18n="kind.wolf"></button>
+          </div>
+        </fieldset>
+        <fieldset><legend class="px" data-i18n="hire.outfit"></legend>
+          <div class="chips" data-k="outfit">
+            <button type="button" class="chip px-c" data-v="office" data-i18n="outfit.office"></button>
+            <button type="button" class="chip px-c" data-v="hoodie" data-i18n="outfit.hoodie"></button>
+            <button type="button" class="chip px-c" data-v="dress" data-i18n="outfit.dress"></button>
+            <button type="button" class="chip px-c day-only" data-v="sport" data-i18n="outfit.sport"></button>
+          </div>
+        </fieldset>
+        <fieldset><legend class="px" data-i18n="hire.hair"></legend>
+          <div class="chips" data-k="style">
+            <button type="button" class="chip px-c" data-v="bob" data-i18n="hair.bob"></button>
+            <button type="button" class="chip px-c" data-v="long" data-i18n="hair.long"></button>
+            <button type="button" class="chip px-c" data-v="twin" data-i18n="hair.twin"></button>
+            <button type="button" class="chip px-c" data-v="pony" data-i18n="hair.pony"></button>
+          </div>
+        </fieldset>
+        <fieldset><legend class="px" data-i18n="hire.color"></legend>
+          <div class="swatches" id="swatches"></div>
+        </fieldset>
+        <fieldset class="call"><legend class="px" data-i18n="f.call"></legend>
+          <div class="chips" data-k="call">
+            <button type="button" class="chip px-c" data-v="boss" data-i18n="call.boss"></button>
+            <button type="button" class="chip px-c" data-v="chief" data-i18n="call.chief"></button>
+            <button type="button" class="chip px-c" data-v="name" data-i18n="call.name"></button>
+          </div>
+          <label class="yourname" id="yourNameRow" hidden><span data-i18n="f.yourname"></span><input id="yourName" maxlength="16" spellcheck="false" autocomplete="given-name"></label>
+        </fieldset>
+        <div class="hire-actions">
+          <button type="submit" class="btn primary px-c" id="hireBtn" data-i18n="hire.do"></button>
+          <button type="button" class="btn ghost px-c" id="randBtn" data-i18n="hire.rand"></button>
+          <p class="toast" id="toast" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="price" id="price">
+    <div class="price-copy">
+      <h2 class="px" data-perch data-i18n="price.title"></h2>
+      <p class="sub" data-i18n="price.p"></p>
+      <dl class="tiers">
+        <div><dt class="px" data-i18n="tier.px"></dt><dd class="sum" data-i18n="tier.px.price"></dd><dd data-i18n="tier.px.d"></dd></div>
+        <div><dt class="px"><span data-i18n="tier.hd"></span> <span class="tag" data-i18n="tier.hd.note"></span></dt><dd class="sum" data-i18n="tier.hd.price"></dd><dd data-i18n="tier.hd.d"></dd></div>
+        <div class="art"><dt class="px" data-i18n="tier.art"></dt><dd class="sum" data-i18n="tier.art.price"></dd><dd data-i18n="tier.art.d"></dd></div>
+      </dl>
+    </div>
+    <div class="wall px-c" data-perch>
+      <p class="wall-label" id="giftLabel" data-i18n="price.wall"></p>
+      <div class="frames" role="group" aria-labelledby="giftLabel">
+        <button type="button" class="frame f-iskra" data-gift="iskra"><span class="cameo" data-girl="iskra"></span><span class="nm px">Искра</span><span class="say" aria-live="polite"></span></button>
+        <button type="button" class="frame f-yuki" data-gift="yuki"><span class="cameo" data-girl="yuki"></span><span class="nm px">Юки</span><span class="say" aria-live="polite"></span></button>
+        <button type="button" class="frame f-momo" data-gift="momo"><span class="cameo" data-girl="momo"></span><span class="nm px">Момо</span><span class="say" aria-live="polite"></span></button>
+        <button type="button" class="frame f-nori" data-gift="nori"><span class="cameo" data-girl="nori"></span><span class="nm px">Нори</span><span class="say" aria-live="polite"></span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <h2 class="px" data-perch data-i18n="faq.title"></h2>
+    <div class="faq-list">
+      <details id="adult"><summary data-i18n="faq.q0"></summary><p data-i18n="faq.a0"></p></details>
+      <details><summary data-i18n="faq.q1"></summary><p data-i18n="faq.a1"></p></details>
+      <details><summary data-i18n="faq.q2"></summary><p data-i18n="faq.a2"></p></details>
+      <details><summary data-i18n="faq.q3"></summary><p data-i18n="faq.a3"></p></details>
+      <details><summary data-i18n="faq.q4"></summary><p data-i18n="faq.a4"></p></details>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="office foot-office" id="footOffice" data-perch aria-hidden="true"><div class="floor"></div></div>
+  <p data-i18n="footer"></p>
+</footer>
+
+<div class="roam" id="roam" aria-hidden="true"></div>
+<canvas class="confetti" id="fx" aria-hidden="true"></canvas>
+<script type="module" src="landing.js"></script>
+</body>
+</html>
